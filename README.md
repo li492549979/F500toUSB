@@ -1,105 +1,97 @@
-USB to MSX Keyboard Converter for Raspberry Pi Pico
+# USB to MSX Keyboard Converter for Raspberry Pi Pico
+
 This program implements a converter that transforms a USB keyboard into an MSX 13-pin matrix keyboard. Below are the main features and usage instructions:
 
-Main Functions
-USB HID Keyboard Support - Supports standard USB keyboard input.
+## Main Functions
 
-MSX Keyboard Matrix Simulation - Complete 11x8 matrix keyboard simulation.
+1. **USB HID Keyboard Support** - Supports standard USB keyboard input.
+2. **MSX Keyboard Matrix Simulation** - Complete 11x8 matrix keyboard simulation.
+3. **GPIO Interface Control** - Correctly handles all signals for the 13-pin interface.
+4. **Real-time Conversion** - Real-time conversion of USB keystrokes to MSX keyboard signals.
 
-GPIO Interface Control - Correctly handles all signals for the 13-pin interface.
+## Hardware Connections
 
-Real-time Conversion - Real-time conversion of USB keystrokes to MSX keyboard signals.
-
-Hardware Connections
 Based on the GPIO definitions in the program, you need to connect the Raspberry Pi Pico GPIO pins to the MSX 13-pin keyboard interface:
 
-GPIO 0 → Pin 1 (KANA/CODE)
+* **GPIO 0** → Pin 1 (KANA/CODE)
+* **GPIO 1** → Pin 2 (CAPS)
+* **GPIO 2** → Pin 3 (X0)
+* **GPIO 3** → Pin 4 (X1)
+* **GPIO 4** → Pin 5 (X2)
+* **GPIO 5** → Pin 6 (X3)
+* **GPIO 6** → Pin 7 (X4/YD)
+* **GPIO 7** → Pin 8 (X5/YC)
+* **GPIO 8** → Pin 9 (X6/YB)
+* **GPIO 9** → Pin 10 (X7/YA)
+* **GPIO 10** → Pin 11 (KBDIR)
+* **3.3V/5V** → Pin 12 (+5V)
+* **GND** → Pin 13 (GND)
 
-GPIO 1 → Pin 2 (CAPS)
+## Compilation Requirements
 
-GPIO 2 → Pin 3 (X0)
+You need to add the following dependencies to your `CMakeLists.txt`:
 
-GPIO 3 → Pin 4 (X1)
-
-GPIO 4 → Pin 5 (X2)
-
-GPIO 5 → Pin 6 (X3)
-
-GPIO 6 → Pin 7 (X4/YD)
-
-GPIO 7 → Pin 8 (X5/YC)
-
-GPIO 8 → Pin 9 (X6/YB)
-
-GPIO 9 → Pin 10 (X7/YA)
-
-GPIO 10 → Pin 11 (KBDIR)
-
-3.3V/5V → Pin 12 (+5V)
-
-GND → Pin 13 (GND)
-
-Compilation Requirements
-You need to add the following dependencies to your CMakeLists.txt:
-
-CMake
-
+```cmake
 target_link_libraries(your_target_name 
     pico_stdlib 
     tinyusb_host
     tinyusb_board
     hardware_gpio
 )
-Key Features
-Complete Keyboard Mapping - Includes letters, numbers, function keys, arrow keys, and the numeric keypad.
 
-Modifier Key Support - Supports Shift, Ctrl, Alt, and other modifiers.
+```
 
-Bidirectional GPIO Handling - Correctly handles the MSX keyboard scanning protocol.
+## Key Features
 
-Real-time Response - 1ms scan cycle ensures timely response.
+1. **Complete Keyboard Mapping** - Includes letters, numbers, function keys, arrow keys, and the numeric keypad.
+2. **Modifier Key Support** - Supports Shift, Ctrl, Alt, and other modifiers.
+3. **Bidirectional GPIO Handling** - Correctly handles the MSX keyboard scanning protocol.
+4. **Real-time Response** - 1ms scan cycle ensures timely response.
 
-USB Keyboard Connection Methods
-Method 1: Using a USB OTG Adapter (Recommended)
-Purchase a USB OTG Adapter: You need a Micro USB to USB-A OTG adapter.
+## USB Keyboard Connection Methods
 
-Connection Steps:
+### Method 1: Using a USB OTG Adapter (Recommended)
 
-Insert the USB OTG adapter into the Pico's Micro USB port.
+1. **Purchase a USB OTG Adapter**: You need a Micro USB to USB-A OTG adapter.
+2. **Connection Steps**:
+* Insert the USB OTG adapter into the Pico's Micro USB port.
+* Insert the USB keyboard into the OTG adapter's USB-A port.
+* The Pico will operate as a USB Host.
 
-Insert the USB keyboard into the OTG adapter's USB-A port.
 
-The Pico will operate as a USB Host.
 
-Method 2: Direct Soldering of USB Interface
+### Method 2: Direct Soldering of USB Interface
+
 If you prefer a more stable connection, you can solder a USB-A female socket directly onto the Pico:
 
-USB D+ → GPIO Pin (Configuration required in code)
+* **USB D+** → GPIO Pin (Configuration required in code)
+* **USB D-** → GPIO Pin (Configuration required in code)
+* **USB VCC** → 5V or 3.3V
+* **USB GND** → GND
 
-USB D- → GPIO Pin (Configuration required in code)
+### Method 3: Using the Pico W USB Port
 
-USB VCC → 5V or 3.3V
-
-USB GND → GND
-
-Method 3: Using the Pico W USB Port
 If using a Raspberry Pi Pico W, the connection method is the same, but power management is improved.
 
-USB Host Configuration in Code
+## USB Host Configuration in Code
+
 The existing code is already configured for USB Host mode:
 
-C
-
+```c
 // Initialize TinyUSB Host Mode
 tuh_init(BOARD_TUH_RHPORT);
-Important Notes
-Power Requirements: USB keyboards may require significant current; ensure the Pico has an adequate power supply.
 
-OTG Adapter Quality: It is recommended to use a high-quality OTG adapter to avoid unstable connections.
+```
 
-Compatibility: Most standard USB keyboards are supported, but some keyboards with special functions may require additional drivers.
+## Important Notes
 
-Complete Connection Diagram
+1. **Power Requirements**: USB keyboards may require significant current; ensure the Pico has an adequate power supply.
+2. **OTG Adapter Quality**: It is recommended to use a high-quality OTG adapter to avoid unstable connections.
+3. **Compatibility**: Most standard USB keyboards are supported, but some keyboards with special functions may require additional drivers.
+
+## Complete Connection Diagram
+
+```
 [USB Keyboard] 
     ↓ (USB-A)
 [USB OTG Adapter]
@@ -108,10 +100,14 @@ Complete Connection Diagram
 
 At the same time, Pico GPIO pins connect to the MSX:
 [Pico GPIO 0-10] → [MSX 13-pin Keyboard Interface]
-Power Supply Suggestions
-If the USB keyboard consumes high power, it is recommended to power the Pico separately (via the VSYS pin).
 
-You can use a 5V power adapter to power the entire system.
+```
+
+## Power Supply Suggestions
+
+* If the USB keyboard consumes high power, it is recommended to power the Pico separately (via the VSYS pin).
+* You can use a 5V power adapter to power the entire system.
+
 
 
 一个树莓派Pico的程序，将USB键盘转换为MSX 13pin矩阵键盘。
