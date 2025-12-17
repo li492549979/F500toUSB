@@ -145,7 +145,6 @@ USB to MSX Keyboard Converter for Raspberry Pi Pico
 
 你需要在CMakeLists.txt中添加以下依赖：
 
-cmake
 
 ```cmake
 target_link_libraries(your_target_name 
